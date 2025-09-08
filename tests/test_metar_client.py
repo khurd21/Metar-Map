@@ -2,7 +2,7 @@
 Tests for the MetarClient.
 """
 
-from metar_map.metar_client import MetarClient
+from metar_map.client import MetarClient
 
 
 def test_metar_client_initialization():
