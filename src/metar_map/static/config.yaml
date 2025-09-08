@@ -1,0 +1,39 @@
+base_url: "https://aviationweather.gov"
+endpoints:
+  metar: "/api/data/metar"
+  taf: "/api/data/taf"
+  pirep: "/api/data/pirep"
+  airmet: "/api/data/airmet"
+  stationinfo: "/api/data/stationinfo"
+  airport: "/api/data/airport"
+led_patterns:
+  VFR:
+    color: GREEN
+    duration: 5
+    blink: false
+    blink_speed: 0.5
+  MVFR:
+    color: BLUE
+    duration: 5
+    blink: false
+    blink_speed: 0.5
+  IFR:
+    color: RED
+    duration: 5
+    blink: false
+    blink_speed: 0.5
+  LIFR:
+    color: PINK
+    duration: 5
+    blink: false
+    blink_speed: 0.5
+  LIGHTNING:
+    color: WHITE
+    duration: 8
+    blink: true
+    blink_speed: 0.8
+  SNOW:
+    color: BRIGHT_BLUE
+    duration: 8
+    blink: true
+    blink_speed: 0.8
