@@ -1,4 +1,4 @@
-from enum import Enum, auto
+from enum import Enum
 from dataclasses import dataclass
 from typing import Any, Optional
 
@@ -6,14 +6,19 @@ from metar_map.config import load_config
 
 
 class LEDColor(Enum):
-    # TODO: Make these (255, 255, 255) RGBs
-    GREEN = auto()
-    BLUE = auto()
-    RED = auto()
-    PINK = auto()
-    YELLOW = auto()
-    WHITE = auto()
-    BRIGHT_BLUE = auto()
+    OFF = (0, 0, 0)
+    GREEN = (0, 255, 0)
+    BLUE = (0, 0, 255)
+    RED = (255, 0, 0)
+    PINK = (255, 105, 180)
+    YELLOW = (255, 255, 0)
+    WHITE = (255, 255, 255)
+    BRIGHT_BLUE = (0, 191, 255)
+
+    @property
+    def rgb(self) -> tuple[int, int, int]:
+        """Returns (R, G, B) tuple."""
+        return self.value
 
 
 @dataclass
@@ -26,7 +31,7 @@ class LEDPattern:
 
 def _map_to_led_pattern(config: Any) -> LEDPattern:
     return LEDPattern(
-        color=config.get("color"),
+        color=LEDColor[config.get("color").upper()],
         total_duration_s=config.get("duration"),
         blink=config.get("blink"),
         blink_speed_s=config.get("blink_speed"),
