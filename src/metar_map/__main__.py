@@ -1,5 +1,6 @@
 from metar_map.client import MetarClient
 from metar_map.pattern_builder import LEDPatternBuilder
+
 from metar_map.led_controller import LEDController
 
 import time
@@ -7,13 +8,13 @@ import time
 if __name__ == "__main__":
     client = MetarClient()
     builder = LEDPatternBuilder()
-    controller = LEDController(num_leds=1)
+    controller = LEDController(num_leds=3)
     print(f"Base URL: {client.base_url}")
     print(f"METAR Endpoint: {client.metar_endpoint}")
 
     try:
         while True:
-            metar_data = client.get_metar(["PANC", "CYUL", "CRVR"])
+            metar_data = client.get_metar(["KSHN", "KRDU", "KCLT"])
             for i, data in enumerate(metar_data):
                 print("----------------------------------------")
                 print(f"Index: {i}")

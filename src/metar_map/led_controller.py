@@ -24,7 +24,8 @@ class LEDController:
         self._thread.start()
 
     def _set_led(self, led_index: int, color: tuple[int, int, int]):
-        self.strip[led_index] = color
+        r, g, b = color
+        self.strip[led_index] = (g, r, b)
         self.strip.show()
 
     def update_patterns(self, led_index: int, patterns: list[LEDPattern]):
