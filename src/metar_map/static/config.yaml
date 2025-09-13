@@ -6,6 +6,21 @@ endpoints:
   airmet: "/api/data/airmet"
   stationinfo: "/api/data/stationinfo"
   airport: "/api/data/airport"
+logger:
+  log_file: "logs/metar_map.log"
+  console_level: "INFO"
+  file_level: "DEBUG"
+  rotation:
+    type: "timed"
+    when: "midnight"
+    interval: 1
+    backup_count: 7
+    max_bytes: 1000000
+icao_codes:
+  - KSHN
+  - KRDU
+  - KCLT
+refresh_time: 1800
 led_patterns:
   VFR:
     color: GREEN

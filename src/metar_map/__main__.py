@@ -1,25 +1,30 @@
+import time
 from metar_map.client import MetarClient
 from metar_map.pattern_builder import LEDPatternBuilder
-
 from metar_map.led_controller import LEDController
-
-import time
+from metar_map.config import load_config
+from metar_map.logger import Logger
 
 if __name__ == "__main__":
+    config = load_config()
+    icao_codes: list[str] = config.get("icao_codes", [])
+    refresh_time: int = int(config.get("refresh_time", 1800))
     client = MetarClient()
     builder = LEDPatternBuilder()
-    controller = LEDController(num_leds=3)
-    print(f"Base URL: {client.base_url}")
-    print(f"METAR Endpoint: {client.metar_endpoint}")
-
+    controller = LEDController(num_leds=len(icao_codes))
+    logger = Logger()
+    logger.info(f"Metar Map started up with the following settings:")
+    logger.info(f"{config}")
     try:
         while True:
-            metar_data = client.get_metar(["KSHN", "KRDU", "KCLT"])
+            metar_data = client.get_metar(icao_codes)
             for i, data in enumerate(metar_data):
-                print("----------------------------------------")
-                print(f"Index: {i}")
+                logger.debug("----------------------------------------")
+                logger.debug(f"Index: {i}")
                 if data.flight_category is None:
-                    print("Flight category was found to be none.")
+                    logger.warning(
+                        f"Flight category for `{data.icao}` was None. Skipping..."
+                    )
                     continue
                 patterns = builder.build_led_patterns(
                     flight_category=data.flight_category,
@@ -27,13 +32,14 @@ if __name__ == "__main__":
                     snow=bool(data.snow),
                 )
                 controller.update_patterns(i, patterns)
-                print(f"Flight Category: {data.flight_category}")
+                logger.debug(f"ICAO: {data.icao}")
+                logger.debug(f"Flight Category: {data.flight_category}")
                 for pattern in patterns:
-                    print(pattern)
+                    logger.debug(str(pattern))
 
-            time.sleep(60)
+            time.sleep(refresh_time)
 
     except KeyboardInterrupt:
-        print("\nStopping LED controller...")
+        logger.info("\nStopping LED controller...")
         controller.stop()
-        print("Done.")
+        logger.info("Done.")
