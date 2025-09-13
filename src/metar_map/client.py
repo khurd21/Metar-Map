@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 import requests
 
+from metar_map.logger import Logger
 from metar_map.config import load_config
 
 
@@ -29,6 +30,7 @@ class MetarClient:
         config = load_config(config_path=config_path)
         self.base_url: str = config.get("base_url", "")
         self.metar_endpoint: str = config.get("endpoints", {}).get("metar", "")
+        self._logger = Logger()
 
     def get_metar(self, ids: list[str]) -> list[MetarData]:
         """
@@ -37,9 +39,10 @@ class MetarClient:
         try:
             ids_param = ",".join(ids)
             url = f"{self.base_url}{self.metar_endpoint}?ids={ids_param}&format=json"
+            self._logger.debug(f"Making request for metar data with url `{url}`")
             response = requests.get(url, timeout=10)
             response.raise_for_status()
-            return [
+            payload = [
                 MetarData(
                     icao=item.get("icaoId"),
                     name=item.get("name"),
@@ -53,5 +56,17 @@ class MetarClient:
                 )
                 for item in response.json()
             ]
-        except Exception:
+            self._logger.debug(f"Payload: {payload}")
+            return payload
+        except Exception as e:
+            self._logger.error(f"An error occurred querying for metar data: {e}")
             return []
+
+
+if __name__ == "__main__":
+    client = MetarClient()
+    config = load_config()
+    codes = config.get("icao_codes", [])
+    for code in codes:
+        print(f"- {code}")
+    print(client.get_metar(config.get("icao_codes", [])))
