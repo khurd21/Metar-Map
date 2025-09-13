@@ -21,6 +21,7 @@ icao_codes:
   - KRDU
   - KCLT
 refresh_time: 1800
+brightness: 0.15
 led_patterns:
   VFR:
     color: GREEN
