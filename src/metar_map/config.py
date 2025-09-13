@@ -1,6 +1,6 @@
-import importlib.resources as resources
-import os
+from importlib import resources
 from typing import Any, Optional
+import os
 
 import yaml
 

@@ -34,21 +34,24 @@ class MetarClient:
         """
         Fetch METAR data for the given station IDs.
         """
-        ids_param = ",".join(ids)
-        url = f"{self.base_url}{self.metar_endpoint}?ids={ids_param}&format=json"
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        return [
-            MetarData(
-                icao=item.get("icaoId"),
-                name=item.get("name"),
-                metar_type=item.get("metarType"),
-                flight_category=item.get("fltCat"),
-                latitude=item.get("lat"),
-                longitude=item.get("lon"),
-                wind_gust=item.get("wgst"),
-                raw=item.get("rawOb"),
-                snow=item.get("snow"),
-            )
-            for item in response.json()
-        ]
+        try:
+            ids_param = ",".join(ids)
+            url = f"{self.base_url}{self.metar_endpoint}?ids={ids_param}&format=json"
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            return [
+                MetarData(
+                    icao=item.get("icaoId"),
+                    name=item.get("name"),
+                    metar_type=item.get("metarType"),
+                    flight_category=item.get("fltCat"),
+                    latitude=item.get("lat"),
+                    longitude=item.get("lon"),
+                    wind_gust=item.get("wgst"),
+                    raw=item.get("rawOb"),
+                    snow=item.get("snow"),
+                )
+                for item in response.json()
+            ]
+        except Exception:
+            return []
