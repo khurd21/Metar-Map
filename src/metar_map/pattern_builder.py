@@ -52,7 +52,7 @@ class LEDPatternBuilder:
         if category_config:
             patterns.append(_map_to_led_pattern(category_config))
         if lightning:
-            patterns.append(_map_to_led_pattern(led_patterns.get("LIGHTING")))
+            patterns.append(_map_to_led_pattern(led_patterns.get("LIGHTNING")))
         if snow:
             patterns.append(_map_to_led_pattern(led_patterns.get("SNOW")))
 
