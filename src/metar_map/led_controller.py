@@ -33,6 +33,9 @@ class LEDController:
     def update_patterns(self, led_index: int, patterns: list[LEDPattern]):
         with self._lock:
             self._led_patterns[led_index] = patterns.copy()
+            # Reset last_states for this LED so pattern_index is always valid
+            if hasattr(self, "_last_states"):
+                self._last_states.pop(led_index, None)
 
     def stop(self):
         self._stop_event.set()
@@ -45,7 +48,7 @@ class LEDController:
         self.strip.show()
 
     def _run_loop(self):
-        last_states: dict[int, dict[str, Any]] = {}
+        self._last_states: dict[int, dict[str, Any]] = {}
         while not self._stop_event.is_set():
             now = time.monotonic()
             with self._lock:
@@ -55,8 +58,8 @@ class LEDController:
                         self._set_led(led_index, LEDColor.OFF.rgb)
                         continue
 
-                    if led_index not in last_states:
-                        last_states[led_index] = {
+                    if led_index not in self._last_states:
+                        self._last_states[led_index] = {
                             "pattern_index": 0,
                             "pattern_end": now + patterns[0].total_duration_s,
                             "led_on": True,
@@ -67,7 +70,18 @@ class LEDController:
                             ),
                         }
 
-                    state = last_states[led_index]
+                    state = self._last_states[led_index]
+                    # Ensure pattern_index is always valid
+                    if state["pattern_index"] >= len(patterns):
+                        state["pattern_index"] = 0
+                        state["pattern_end"] = now + patterns[0].total_duration_s
+                        state["led_on"] = True
+                        state["next_blink"] = (
+                            now + patterns[0].blink_speed_s
+                            if patterns[0].blink
+                            else None
+                        )
+
                     pattern = patterns[int(state["pattern_index"])]
 
                     if (
@@ -97,3 +111,34 @@ class LEDController:
                         )
 
             time.sleep(0.05)
+
+
+if __name__ == "__main__":
+
+    NUM_LEDS = 10
+    controller = LEDController(num_leds=NUM_LEDS, brightness=0.2)
+
+    # Define three patterns: solid RED, blinking WHITE, solid GREEN
+    solid_red = LEDPattern(color=LEDColor.RED, total_duration_s=2, blink=False)
+    blink_white = LEDPattern(
+        color=LEDColor.WHITE, total_duration_s=2, blink=True, blink_speed_s=0.3
+    )
+    solid_green = LEDPattern(color=LEDColor.GREEN, total_duration_s=2, blink=False)
+    patterns1 = [solid_red, blink_white, solid_green]
+
+    blink_blue = LEDPattern(color=LEDColor.BLUE, total_duration_s=5, blink=True)
+    blink_pink = LEDPattern(color=LEDColor.PINK, total_duration_s=5, blink=True)
+    patterns2 = [blink_blue, blink_pink]
+
+    try:
+        while True:
+            for i in range(NUM_LEDS):
+                controller.update_patterns(i, patterns1)
+            time.sleep(60)
+            for i in range(NUM_LEDS):
+                controller.update_patterns(i, patterns2)
+            time.sleep(60)
+    except KeyboardInterrupt:
+        print("\nStopping LED controller...")
+        controller.stop()
+        print("Done.")
