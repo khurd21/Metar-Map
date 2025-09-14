@@ -65,8 +65,4 @@ class MetarClient:
 
 if __name__ == "__main__":
     client = MetarClient()
-    config = load_config()
-    codes = config.get("icao_codes", [])
-    for code in codes:
-        print(f"- {code}")
-    print(client.get_metar(config.get("icao_codes", [])))
+    print(client.get_metar(["KLHZ"]))
