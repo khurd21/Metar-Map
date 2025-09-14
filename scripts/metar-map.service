@@ -1,0 +1,19 @@
+# Paste this file into /etc/systemd/system/metar-map.service
+# Replace path with your path to .venv and __main__.py
+
+[Unit]
+Description=Metar Map Weather LED Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/<user>/Workplace/Metar-Map/.venv/bin/python -m metar_map
+Restart=always
+RestartSec=5
+User=kyhurd
+WorkingDirectory=/home/<user>/Workplace/Metar-Map
+# Prevent multiple instances
+PIDFile=/var/run/metar-map.pid
+
+[Install]
+WantedBy=multi-user.target
