@@ -18,8 +18,7 @@ if __name__ == "__main__":
     builder = LEDPatternBuilder()
     controller = LEDController(num_leds=len(raw_icao_codes), brightness=brightness)
     logger = Logger()
-    logger.info("Metar Map started up with the following settings:")
-    logger.info(f"{config}")
+    logger.info(f"Metar Map started up with the following settings:\n{config}")
     try:
         while True:
             metar_data = client.get_metar(filtered_icao_codes)
@@ -40,6 +39,7 @@ if __name__ == "__main__":
                     flight_category=data.flight_category,
                     lightning=data.lightning,
                     snow=bool(data.snow),
+                    gusts=bool(data.wind_gust),
                 )
                 controller.update_patterns(led_index, patterns)
                 logger.debug(f"ICAO: {data.icao}")

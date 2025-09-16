@@ -65,4 +65,4 @@ class MetarClient:
 
 if __name__ == "__main__":
     client = MetarClient()
-    print(client.get_metar(["KLHZ"]))
+    print(client.get_metar(["PAAK"]))

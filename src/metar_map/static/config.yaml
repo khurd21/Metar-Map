@@ -53,3 +53,8 @@ led_patterns:
     duration: 8
     blink: true
     blink_speed: 0.8
+  GUSTS:
+    color: YELLOW
+    duration: 8
+    blink: true
+    blink_speed: 0.8
