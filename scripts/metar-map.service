@@ -10,7 +10,7 @@ Type=simple
 ExecStart=/home/<user>/Workplace/Metar-Map/.venv/bin/python -m metar_map
 Restart=always
 RestartSec=5
-User=kyhurd
+User=root
 WorkingDirectory=/home/<user>/Workplace/Metar-Map
 # Prevent multiple instances
 PIDFile=/var/run/metar-map.pid

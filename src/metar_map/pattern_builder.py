@@ -43,7 +43,7 @@ class LEDPatternBuilder:
         self._config = load_config(config_path=config_path)
 
     def build_led_patterns(
-        self, flight_category: str, lightning: bool, snow: bool
+        self, flight_category: str, lightning: bool, snow: bool, gusts: bool
     ) -> list[LEDPattern]:
         patterns: list[LEDPattern] = []
         led_patterns = self._config.get("led_patterns", {})
@@ -55,5 +55,7 @@ class LEDPatternBuilder:
             patterns.append(_map_to_led_pattern(led_patterns.get("LIGHTNING")))
         if snow:
             patterns.append(_map_to_led_pattern(led_patterns.get("SNOW")))
+        if gusts:
+            patterns.append(_map_to_led_pattern(led_patterns.get("GUSTS")))
 
         return patterns
