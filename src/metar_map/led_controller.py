@@ -14,6 +14,7 @@ class LEDController:
         self._led_patterns: dict[int, list[LEDPattern]] = {}
         self._lock = threading.Lock()
         self._stop_event = threading.Event()
+        self._last_states: dict[int, dict[str, Any]] = {}
 
         self.strip = neopixel.NeoPixel(
             pin=gpio_pin,  # type: ignore
@@ -25,10 +26,11 @@ class LEDController:
         self._thread = threading.Thread(target=self._run_loop, daemon=True)
         self._thread.start()
 
-    def _set_led(self, led_index: int, color: tuple[int, int, int]):
+    def _set_led(self, led_index: int, color: tuple[int, int, int], show: bool = False):
         r, g, b = color
         self.strip[led_index] = (g, r, b)
-        self.strip.show()
+        if show:
+            self.strip.show()
 
     def update_patterns(self, led_index: int, patterns: list[LEDPattern]):
         with self._lock:
@@ -48,7 +50,7 @@ class LEDController:
         self.strip.show()
 
     def _run_loop(self):
-        self._last_states: dict[int, dict[str, Any]] = {}
+        self._last_states = {}
         while not self._stop_event.is_set():
             now = time.monotonic()
             with self._lock:
@@ -109,6 +111,7 @@ class LEDController:
                             if next_pattern.blink
                             else None
                         )
+                self.strip.show()
 
             time.sleep(0.05)
 
