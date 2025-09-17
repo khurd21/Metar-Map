@@ -71,6 +71,23 @@ Edit `src/metar_map/static/config.yaml`:
 - `brightness`: LED brightness (0.0–1.0)
 - `led_patterns`: Customize colors, blink, and durations for each flight category
 
+## LED Flight Category & Condition Mapping
+
+By default, Metar Map uses the following LED colors and blink behaviors to represent flight categories and special weather conditions:
+
+| Condition   | Color       | Blinks? | Description                                      |
+|-------------|-------------|---------|--------------------------------------------------|
+| VFR         | Green       | No      | Visual Flight Rules: Ceiling > 3,000 ft, Vis > 5 mi |
+| MVFR        | Blue        | No      | Marginal VFR: Ceiling 1,000–3,000 ft or Vis 3–5 mi |
+| IFR         | Red         | No      | Instrument Flight Rules: Ceiling 500–1,000 ft or Vis 1–3 mi |
+| LIFR        | Pink        | No      | Low IFR: Ceiling < 500 ft or Vis < 1 mi          |
+| Lightning   | White       | Yes     | Blinks white to indicate lightning detected      |
+| Snow        | Bright Blue | Yes     | Blinks bright blue for snow or frozen precipitation |
+| Gusts       | Yellow      | Yes     | Blinks yellow for strong wind gusts              |
+| UNKNOWN     | Red         | Yes     | Blinks red if station data is missing or unknown |
+
+These are the **default settings** as defined in your [config.yaml](./src/metar_map/static/config.yaml) file, but you can fully customize the color, blink speed, and duration for each condition by editing the `led_patterns` section in your configuration.
+
 ## Releases & Artifacts
 
 Download pre-built packages from the [Releases page](https://github.com/khurd21/Metar-Map/releases) for easy setup.
